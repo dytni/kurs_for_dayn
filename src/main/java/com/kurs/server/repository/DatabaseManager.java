@@ -11,10 +11,12 @@ public class DatabaseManager {
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
     private final ClientRepository clientRepository;
+    private final JobPositionRepository jobPositionRepository;
     public DatabaseManager() {
         clientRepository = new ClientRepository();
         adminRepository = new AdminRepository();
-        userRepository = new UserRepository(adminRepository, clientRepository);
+        jobPositionRepository = new JobPositionRepository();
+        userRepository = new UserRepository();
 
     } public boolean isLoginTaken(String login) {
        return userRepository.isLoginTaken(login);
@@ -33,6 +35,10 @@ public class DatabaseManager {
     }
 
     public boolean addClient(String login, String password, int totalHours, String role) {
+        if (isLoginTaken(login)) {
+            System.out.println("Имя пользователя уже занято: " + login);
+            return false;
+        }
         return clientRepository.addClient(login,password,totalHours,role);
     }
 
@@ -59,6 +65,9 @@ public class DatabaseManager {
     public boolean assignJobToClient(String clientUuid, int jobId) {
        return clientRepository.assignJobToClient(clientUuid, jobId);
     }
+    public List<String> getJobsByClient(String clientUuid) {
+        return clientRepository.getJobsByClient(clientUuid);
+    }
 
     // Добавление времени клиенту
     public boolean addHoursToClient(String clientUuid, int hours) {
@@ -73,5 +82,41 @@ public class DatabaseManager {
     public void closeConnection() {
         DatabaseConnection databaseConnection = DatabaseConnection.getInstance();
         databaseConnection.closeConnection();
+    }
+
+    public List<String> getAllJobPositions() {
+        return jobPositionRepository.getAllJobPositions();
+    }
+
+    public boolean addJobPosition(String positionName, double hourlyRate) {
+        return jobPositionRepository.addJobPosition(positionName,hourlyRate);
+    }
+
+    public boolean updateJobPosition(int id, String positionName, double hourlyRate) {
+        return jobPositionRepository.updateJobPosition(id,positionName,hourlyRate);
+    }
+
+    public boolean deleteJobPosition(int id) {
+        return jobPositionRepository.deleteJobPosition(id);
+    }
+
+    public List<String> getAllAdmins() {
+        return adminRepository.getAllAdmins();
+    }
+
+    public boolean deleteAdmin(String adminUuid) {
+        return adminRepository.deleteAdmin(adminUuid);
+    }
+
+    public boolean isLoginATaken(String login) {
+        return adminRepository.isLoginTaken(login);
+    }
+
+    public int getJobIdByName(String jobName) {
+        return clientRepository.getJobIdByName(jobName);
+    }
+
+    public boolean removeJobFromClient(String clientUuid, int jobId) {
+        return userRepository.removeJobFromClient(clientUuid, jobId);
     }
 }

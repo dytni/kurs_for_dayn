@@ -15,6 +15,22 @@ public class ClientRepository {
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
+    public int getJobIdByName(String jobName) {
+        String query = "SELECT id FROM JobPosition WHERE position_name = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, jobName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Возвращаем -1, если должность не найдена
+    }
+
+
     // Добавление клиента
     public boolean addClient(String login, String password, int totalHours, String role) {
         String userQuery = "INSERT INTO Users (login, passw, role) VALUES (?, ?, ?) RETURNING uuid";
@@ -148,6 +164,29 @@ public class ClientRepository {
             return false;
         }
     }
+
+    public List<String> getJobsByClient(String clientUuid) {
+        String query = "SELECT cj.job_id, jp.position_name, jp.hourly_rate " +
+                "FROM ClientJob cj " +
+                "JOIN JobPosition jp ON cj.job_id = jp.id " +
+                "WHERE cj.client_uuid = ?";
+        List<String> jobs = new ArrayList<>();
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setObject(1, UUID.fromString(clientUuid));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    jobs.add(
+                            rs.getString("position_name") + " "
+                            );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return jobs;
+    }
+
+
 
     // Добавление времени клиенту
     public boolean addHoursToClient(String clientUuid, int hours) {

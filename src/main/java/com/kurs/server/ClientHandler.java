@@ -25,7 +25,9 @@ public class ClientHandler implements Runnable {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
+            AdminService adminService = new AdminService(dbManager,logger);
             ClientService clientService = new ClientService(logger, dbManager);
+            JobPositionService jobPositionService = new JobPositionService(dbManager, logger);
 
             String command;
             while ((command = in.readLine()) != null) {
@@ -74,6 +76,48 @@ public class ClientHandler implements Runnable {
                     case "ADD_HOURS":
                         clientService.addHoursToClient(in, out);
                         break;
+                    // -------------------- Должности --------------------
+                    case "VIEW_JOB_POSITIONS":
+                        jobPositionService.getAllJobPositions(out);
+                        break;
+
+                    case "ADD_JOB_POSITION":
+                        jobPositionService.addJobPosition(in, out);
+                        break;
+
+                    case "UPDATE_JOB_POSITION":
+                        jobPositionService.updateJobPosition(in, out);
+                        break;
+
+                    case "GET_CLIENT_JOBS":
+                        clientService.getJobsByClient(in, out);
+                        break;
+
+                    case "REMOVE_JOB":
+                        clientService.removeJob(in,out);
+                        break;
+
+
+                    case "DELETE_JOB_POSITION":
+                        jobPositionService.deleteJobPosition(in, out);
+                        break;
+
+                    case "ASSIGN_JOB":
+                        clientService.assignJobToClient(in, out);
+                        break;
+
+                    case "VIEW_ADMINS":
+                        adminService.getAllAdmins(out);
+                        break;
+
+                    case "ADD_ADMIN":
+                        adminService.addAdmin(in, out);
+                        break;
+
+                    case "DELETE_ADMIN":
+                        adminService.deleteAdmin(in, out);
+                        break;
+
 
                     // -------------------- Неизвестная команда --------------------
                     default:
@@ -93,4 +137,5 @@ public class ClientHandler implements Runnable {
             }
         }
     }
+
 }

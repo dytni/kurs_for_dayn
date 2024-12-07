@@ -6,6 +6,8 @@ import com.kurs.client.utlis.StyleUtils;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ClientTablePanel extends JPanel {
@@ -18,7 +20,7 @@ public class ClientTablePanel extends JPanel {
         setLayout(new BorderLayout());
 
         // Создаем таблицу и подключаем модель
-        tableModel = new DefaultTableModel(new String[]{"UUID", "Логин", "Часы"}, 0);
+        tableModel = new DefaultTableModel(new String[]{"UUID", "Логин", "Часы", "Должность"}, 0);
         clientTable = new JTable(tableModel);
         clientTable.setSelectionBackground(StyleUtils.SELECTION_BG_COLOR);
         clientTable.setSelectionForeground(StyleUtils.SELECTION_TEXT_COLOR);
@@ -31,10 +33,6 @@ public class ClientTablePanel extends JPanel {
         loadClients();
     }
 
-    public JTable getClientTable() {
-        return clientTable;
-    }
-
     public void loadClients() {
         tableModel.setRowCount(0); // Очищаем таблицу
         clientConnection.send("VIEW_CLIENTS");
@@ -43,7 +41,20 @@ public class ClientTablePanel extends JPanel {
         for (int i = 0; i < clientCount; i++) {
             String clientData = clientConnection.receive();
             String[] clientInfo = clientData.split(",");
-            tableModel.addRow(clientInfo);
+
+            // Создаем изменяемый список на основе массива
+            List<String> clientInfoList = new ArrayList<>(Arrays.asList(clientInfo));
+
+            // Добавляем должность
+            clientInfoList.add(clientConnection.receive());
+
+            // Добавляем строку в таблицу
+            tableModel.addRow(clientInfoList.toArray());
         }
+    }
+
+
+    public JTable getClientTable() {
+        return clientTable;
     }
 }

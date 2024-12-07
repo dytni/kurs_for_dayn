@@ -25,6 +25,13 @@ public class ClientService {
             out.println(clients.size());
             for (String client : clients) {
                 out.println(client);
+
+                List<String> jobs = clientRepository.getJobsByClient(client.split(",")[0]);
+                StringBuilder res = new StringBuilder();
+                for (String job : jobs) {
+                    res.append(job);
+                }
+                out.println(res.toString());
             }
             logger.log("INFO: Список клиентов успешно отправлен администратору.");
         } catch (Exception e) {
@@ -36,16 +43,19 @@ public class ClientService {
     // Добавление нового клиента
     public void addClient(BufferedReader in, PrintWriter out) throws IOException {
         try {
-            String login = in.readLine();
-            String password = in.readLine();
-            int totalHours = Integer.parseInt(in.readLine());
-            String role = "client";
 
-            boolean added = clientRepository.addClient(login, password, totalHours, role);
-            out.println(added ? "SUCCESS" : "FAILURE");
-            logger.log(added
-                    ? "INFO: Клиент с логином '" + login + "' успешно добавлен."
-                    : "ERROR: Не удалось добавить клиента с логином '" + login + "'.");
+
+                String login = in.readLine();
+                String password = in.readLine();
+                int totalHours = Integer.parseInt(in.readLine());
+                String role = "client";
+
+                boolean added = clientRepository.addClient(login, password, totalHours, role);
+                out.println(added ? "SUCCESS" : "FAILURE");
+                logger.log(added
+                        ? "INFO: Клиент с логином '" + login + "' успешно добавлен."
+                        : "ERROR: Не удалось добавить клиента с логином '" + login + "'.");
+
         } catch (Exception e) {
             logger.log("ERROR: Ошибка при добавлении клиента: " + e.getMessage());
             out.println("FAILURE");
@@ -100,4 +110,66 @@ public class ClientService {
             out.println("FAILURE");
         }
     }
+
+    public void assignJobToClient(BufferedReader in, PrintWriter out) {
+        try {
+            String clientId = in.readLine();
+            int jobId = Integer.parseInt(in.readLine());
+
+            boolean success = clientRepository.assignJobToClient(clientId, jobId);
+            out.println(success ? "SUCCESS" : "FAILURE");
+            logger.log(success
+                    ? "INFO: Должность ID " + jobId + " успешно назначена клиенту с UUID " + clientId + "."
+                    : "ERROR: Ошибка при назначении должности клиенту с UUID " + clientId + ".");
+        } catch (Exception e) {
+            logger.log("ERROR: Ошибка при назначении должности: " + e.getMessage());
+            out.println("FAILURE");
+        }
+    }
+
+    public void getJobsByClient(BufferedReader in, PrintWriter out) {
+
+            try {
+                String clientUuid = in.readLine();
+                List<String> jobs = clientRepository.getJobsByClient(clientUuid);
+                out.println(jobs.size());
+                for (String job : jobs) {
+                    out.println(job); // Формат: "ID: Name, Rate"
+                }
+                logger.log("INFO: Список должностей для клиента с UUID " + clientUuid + " успешно отправлен.");
+            } catch (Exception e) {
+                logger.log("ERROR: Ошибка при получении списка должностей клиента: " + e.getMessage());
+                out.println("FAILURE");
+            }
+        }
+
+
+    public void removeJob(BufferedReader in, PrintWriter out) {
+        try {
+            // Читаем UUID клиента из входного потока
+            String clientUuid = in.readLine();
+
+            // Читаем название должности из входного потока
+            String jobName = in.readLine();
+
+            // Получаем ID должности по названию через репозиторий
+            int jobId = clientRepository.getJobIdByName(jobName.trim());
+            if (jobId == -1) {
+                out.println("FAILURE");
+                logger.log("ERROR: Должность с названием '" + jobName + "' не найдена.");
+                return;
+            }
+
+            // Удаляем должность у клиента
+            boolean success = clientRepository.removeJobFromClient(clientUuid, jobId);
+            out.println(success ? "SUCCESS" : "FAILURE");
+            logger.log(success
+                    ? "INFO: Должность '" + jobName + "' успешно удалена у клиента с UUID " + clientUuid + "."
+                    : "ERROR: Не удалось удалить должность '" + jobName + "' у клиента с UUID " + clientUuid + ".");
+        } catch (Exception e) {
+            logger.log("ERROR: Ошибка при удалении должности: " + e.getMessage());
+            out.println("FAILURE");
+        }
+    }
+
 }

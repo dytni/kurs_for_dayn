@@ -1,6 +1,5 @@
 package com.kurs.client.adminForms;
 
-
 import com.kurs.client.ClientConnection;
 
 import javax.swing.*;
@@ -18,26 +17,39 @@ public class AdminMainForm extends JFrame {
         setSize(600, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(3, 1, 10, 10));
+        setLayout(new GridLayout(4, 1, 10, 10));
 
+        // Кнопки меню
         JButton manageClientsButton = new JButton("Управление клиентами");
-        JButton manageProductsButton = new JButton("Управление продуктами");
+        JButton manageAdminsButton = new JButton("Управление администраторами");
+        JButton manageJobPositionsButton = new JButton("Управление должностями");
         JButton logoutButton = new JButton("Выйти");
 
+        // Слушатели событий для кнопок
         manageClientsButton.addActionListener(e -> {
             dispose();
             new ClientCrudForm(clientConnection, userId).setVisible(true);
         });
 
-        manageProductsButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "Раздел пока не доступен."));
+        manageAdminsButton.addActionListener(e -> {
+            dispose();
+            new AdminCrudForm(clientConnection, userId).setVisible(true);
+        });
+
+        manageJobPositionsButton.addActionListener(e -> {
+            dispose();
+            new JobPositionCrudForm(clientConnection, userId).setVisible(true);
+        });
 
         logoutButton.addActionListener(e -> {
             dispose();
             JOptionPane.showMessageDialog(this, "Вы успешно вышли.");
         });
 
+        // Добавляем кнопки на форму
         add(manageClientsButton);
-        add(manageProductsButton);
+        add(manageAdminsButton);
+        add(manageJobPositionsButton);
         add(logoutButton);
 
         setVisible(true);

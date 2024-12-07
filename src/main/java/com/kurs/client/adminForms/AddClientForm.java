@@ -31,6 +31,9 @@ public class AddClientForm extends JFrame {
         JTextField hoursField = StyleUtils.createStyledTextField();
 
         JButton addButton = StyleUtils.createStyledButton("Добавить");
+
+
+
         JButton cancelButton = StyleUtils.createStyledButton("Отмена");
 
         panel.add(loginLabel);
@@ -39,8 +42,12 @@ public class AddClientForm extends JFrame {
         panel.add(passwordField);
         panel.add(hoursLabel);
         panel.add(hoursField);
+
         panel.add(addButton);
         panel.add(cancelButton);
+
+
+
 
         addButton.addActionListener(e -> {
             String login = loginField.getText();
@@ -70,6 +77,8 @@ public class AddClientForm extends JFrame {
                 JOptionPane.showMessageDialog(this, "Клиент успешно добавлен!");
                 clientTablePanel.loadClients();
                 dispose();
+            } else if ("LOGIN_IN_USE".equals(response)) {
+                JOptionPane.showMessageDialog(this, "Логин занят(");
             } else {
                 JOptionPane.showMessageDialog(this, "Ошибка при добавлении клиента!");
             }

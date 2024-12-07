@@ -6,23 +6,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class UserRepository {
     private final Connection connection;
-    ClientRepository clientRepository;
-    AdminRepository adminRepository;
 
-    public UserRepository(AdminRepository adminRepository, ClientRepository clientRepository) {
+    public UserRepository() {
         this.connection = DatabaseConnection.getInstance().getConnection();
-        this.clientRepository = clientRepository;
-        this.adminRepository = adminRepository;
     }
 
-    /**
-     * Проверка, существует ли пользователь с данным логином.
-     * @param login Логин пользователя.
-     * @return true, если логин уже занят; false в противном случае.
-     */
+    public boolean removeJobFromClient(String clientUuid, int jobId) {
+        String query = "DELETE FROM ClientJob WHERE client_uuid = ? AND job_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setObject(1, UUID.fromString(clientUuid));
+            stmt.setInt(2, jobId);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     public boolean isLoginTaken(String login) {
         String query = "SELECT COUNT(*) FROM Users WHERE login = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
