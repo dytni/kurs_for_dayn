@@ -10,10 +10,10 @@ public class DatabaseConnection {
 
         private DatabaseConnection() {
             try {
-                String url = "jdbc:mysql://localhost:3306/logistics";
-                String user = "root";
+                String url = "jdbc:postgresql://localhost:5432/andr";
+                String user = "dytni";
                 String password = "1331";
-                Class.forName("com.mysql.cj.jdbc.Driver");
+                Class.forName("org.postgresql.Driver");
                 connection = DriverManager.getConnection(url, user, password);
                 System.out.println("Подключение к базе данных успешно установлено!");
             } catch (Exception e) {
