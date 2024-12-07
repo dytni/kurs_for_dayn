@@ -97,6 +97,11 @@ public class ClientHandler implements Runnable {
                         clientService.removeJob(in,out);
                         break;
 
+                    case "VIEW_PROFILE":
+                        clientService.viewProfile(in, out);
+                        break;
+
+
 
                     case "DELETE_JOB_POSITION":
                         jobPositionService.deleteJobPosition(in, out);

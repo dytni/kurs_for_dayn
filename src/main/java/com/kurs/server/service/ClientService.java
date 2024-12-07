@@ -172,4 +172,33 @@ public class ClientService {
         }
     }
 
+    public void viewProfile(BufferedReader in, PrintWriter out) {
+        try {
+            // Чтение UUID клиента из входного потока
+            String clientUuid = in.readLine();
+
+            // Получение информации о клиенте из репозитория
+            int hours = clientRepository.getHours(clientUuid);
+            List<String> jobName = clientRepository.getJobsByClient(clientUuid);
+
+            String jobInfo;
+            if (!jobName.isEmpty()) {
+                jobInfo = jobName.getFirst(); // Предполагаем, что клиент может иметь одну должность
+            } else {
+                jobInfo = "Нет должности";
+            }
+
+            // Формируем и отправляем информацию о профиле клиента
+            String profile = String.format("Часы: %d Должность: %s",
+                    hours,
+                    jobInfo);
+
+            out.println(profile);
+            logger.log("INFO: Информация о профиле клиента с UUID " + clientUuid + " успешно отправлена.");
+        } catch (Exception e) {
+            logger.log("ERROR: Ошибка при обработке профиля клиента: " + e.getMessage());
+            out.println("FAILURE");
+        }
+    }
+
 }

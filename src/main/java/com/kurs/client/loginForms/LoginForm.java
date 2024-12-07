@@ -2,6 +2,7 @@ package com.kurs.client.loginForms;
 
 import com.kurs.client.ClientConnection;
 import com.kurs.client.adminForms.AdminMainForm;
+import com.kurs.client.clientForms.ClientMainForm;
 import com.kurs.client.utlis.StyleUtils;
 
 import javax.swing.*;
@@ -93,7 +94,7 @@ public class LoginForm {
             if ("admin".equals(role)) {
                 new AdminMainForm(clientConnection, userId).show();
             } else {
-               // new UserMainForm(clientConnection, Integer.parseInt(userId)).show();
+                new ClientMainForm(clientConnection, userId).show();
             }
         } else {
             showMessage(frame, "Неверное имя пользователя или пароль!", JOptionPane.ERROR_MESSAGE);

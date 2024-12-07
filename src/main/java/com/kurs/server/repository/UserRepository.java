@@ -42,12 +42,6 @@ public class UserRepository {
         return false;
     }
 
-    /**
-     * Аутентификация пользователя.
-     * @param login Логин пользователя.
-     * @param hashedPassword Хешированный пароль пользователя.
-     * @return UUID пользователя, если аутентификация успешна; null в случае ошибки.
-     */
     public String authenticateUserWithHash(String login, String hashedPassword) {
         String query = "SELECT uuid FROM Users WHERE login = ? AND passw = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -64,11 +58,6 @@ public class UserRepository {
         return null;
     }
 
-    /**
-     * Получение роли пользователя по UUID.
-     * @param login Уникальный идентификатор пользователя.
-     * @return Роль пользователя (например, "client" или "admin"); null в случае ошибки.
-     */
     public String getUserRole(String login) {
         String query = "SELECT role FROM Users WHERE login = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -84,10 +73,6 @@ public class UserRepository {
         return null;
     }
 
-    /**
-     * Получение всех пользователей.
-     * @return Список строк, содержащих данные всех пользователей.
-     */
     public List<String> getAllUsers() {
         String query = "SELECT uuid, login, role FROM Users";
         List<String> users = new ArrayList<>();

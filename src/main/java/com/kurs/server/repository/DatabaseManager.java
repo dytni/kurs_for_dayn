@@ -119,4 +119,8 @@ public class DatabaseManager {
     public boolean removeJobFromClient(String clientUuid, int jobId) {
         return userRepository.removeJobFromClient(clientUuid, jobId);
     }
+
+    public int getHours(String clientUuid) {
+        return clientRepository.getTotalHoursByUuid(clientUuid);
+    }
 }

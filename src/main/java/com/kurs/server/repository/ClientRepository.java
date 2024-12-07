@@ -129,6 +129,21 @@ public class ClientRepository {
             }
         }
     }
+    public int getTotalHoursByUuid(String clientUuid) {
+        String query = "SELECT total_hours FROM Clients WHERE uuid = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setObject(1, UUID.fromString(clientUuid));
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total_hours");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Возвращаем -1, если клиент не найден или произошла ошибка
+    }
+
 
 
     // Получение всех клиентов
