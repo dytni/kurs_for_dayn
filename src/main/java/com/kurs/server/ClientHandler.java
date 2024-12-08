@@ -28,6 +28,7 @@ public class ClientHandler implements Runnable {
             AdminService adminService = new AdminService(dbManager,logger);
             ClientService clientService = new ClientService(logger, dbManager);
             JobPositionService jobPositionService = new JobPositionService(dbManager, logger);
+            JobStatisticsService jobStatisticsService = new JobStatisticsService(dbManager.getJobStatisticsRepository(), logger);
 
             String command;
             while ((command = in.readLine()) != null) {
@@ -100,6 +101,19 @@ public class ClientHandler implements Runnable {
                     case "VIEW_PROFILE":
                         clientService.viewProfile(in, out);
                         break;
+
+                    case "GET_SALARY":
+                        clientService.getSalary(in, out);
+                        break;
+
+                    case "GET_CLIENT_COUNT_BY_JOB":
+                        jobStatisticsService.getClientCountByJob(out);
+                        break;
+
+                    case "GET_TOTAL_HOURS_BY_JOB":
+                        jobStatisticsService.getTotalHoursByJob(out);
+                        break;
+
 
 
 

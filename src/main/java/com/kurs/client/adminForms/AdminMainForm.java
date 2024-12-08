@@ -1,6 +1,7 @@
 package com.kurs.client.adminForms;
 
 import com.kurs.client.ClientConnection;
+import com.kurs.client.utlis.StyleUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,10 +21,11 @@ public class AdminMainForm extends JFrame {
         setLayout(new GridLayout(4, 1, 10, 10));
 
         // Кнопки меню
-        JButton manageClientsButton = new JButton("Управление клиентами");
-        JButton manageAdminsButton = new JButton("Управление администраторами");
-        JButton manageJobPositionsButton = new JButton("Управление должностями");
-        JButton logoutButton = new JButton("Выйти");
+        JButton manageClientsButton = StyleUtils.createStyledButton("Управление клиентами");
+        JButton manageAdminsButton = StyleUtils.createStyledButton("Управление администраторами");
+        JButton manageJobPositionsButton = StyleUtils.createStyledButton("Управление должностями");
+        JButton stats = StyleUtils.createStyledButton("Статистика");
+        JButton logoutButton = StyleUtils.createStyledButton("Выйти");
 
         // Слушатели событий для кнопок
         manageClientsButton.addActionListener(e -> {
@@ -45,11 +47,16 @@ public class AdminMainForm extends JFrame {
             dispose();
             JOptionPane.showMessageDialog(this, "Вы успешно вышли.");
         });
+        stats.addActionListener(e -> {
+            dispose();
+            new JobStatisticsForm(clientConnection, userId).setVisible(true);
+        });
 
         // Добавляем кнопки на форму
         add(manageClientsButton);
         add(manageAdminsButton);
         add(manageJobPositionsButton);
+        add(stats);
         add(logoutButton);
 
         setVisible(true);

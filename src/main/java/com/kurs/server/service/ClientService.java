@@ -2,6 +2,7 @@ package com.kurs.server.service;
 
 import com.kurs.server.repository.ClientRepository;
 import com.kurs.server.repository.DatabaseManager;
+import com.kurs.server.util.SalaryData;
 import com.kurs.server.util.ServerLogger;
 
 import java.io.BufferedReader;
@@ -16,6 +17,33 @@ public class ClientService {
     public ClientService(ServerLogger logger, DatabaseManager clientRepository) {
         this.logger = logger;
         this.clientRepository = clientRepository;
+    }
+
+    public void getSalary(BufferedReader in, PrintWriter out) {
+        try {
+            // Читаем UUID клиента
+            String clientUuid = in.readLine();
+
+            // Получаем данные о зарплате из репозитория
+            SalaryData salaryData = clientRepository.getSalary(clientUuid);
+
+            if (salaryData == null) {
+                out.println("NO_DATA");
+                return;
+            }
+
+            if (salaryData.positionName() == null) {
+                out.println("NO_JOB");
+                return;
+            }else{
+                out.println(salaryData.positionName());
+            }
+            out.println(salaryData.hourlyRate());
+            out.println(salaryData.totalHours());
+        } catch (Exception e) {
+            e.printStackTrace();
+            out.println("FAILURE");
+        }
     }
 
     // Получение списка всех клиентов
@@ -189,7 +217,7 @@ public class ClientService {
             }
 
             // Формируем и отправляем информацию о профиле клиента
-            String profile = String.format("Часы: %d Должность: %s",
+            String profile = String.format("Часы: %d. Должность: %s",
                     hours,
                     jobInfo);
 

@@ -1,5 +1,7 @@
 package com.kurs.server.repository;
 
+import com.kurs.server.util.SalaryData;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +15,31 @@ public class ClientRepository {
 
     public ClientRepository() {
         this.connection = DatabaseConnection.getInstance().getConnection();
+    }
+    public SalaryData getSalaryDataByUuid(String clientUuid) {
+        String query = """
+            SELECT jp.position_name, jp.hourly_rate, c.total_hours
+            FROM Clients c
+            LEFT JOIN ClientJob cj ON c.uuid = cj.client_uuid
+            LEFT JOIN JobPosition jp ON cj.job_id = jp.id
+            WHERE c.uuid = ?
+        """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setObject(1, UUID.fromString(clientUuid));
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String positionName = rs.getString("position_name");
+                    double hourlyRate = rs.getDouble("hourly_rate");
+                    int totalHours = rs.getInt("total_hours");
+
+                    return new SalaryData(positionName, hourlyRate, totalHours);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Если данных не найдено
     }
 
     public int getJobIdByName(String jobName) {

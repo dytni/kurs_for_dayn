@@ -1,5 +1,8 @@
 package com.kurs.server.repository;
 
+import com.kurs.server.service.JobStatisticsService;
+import com.kurs.server.util.SalaryData;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,14 +15,20 @@ public class DatabaseManager {
     private final AdminRepository adminRepository;
     private final ClientRepository clientRepository;
     private final JobPositionRepository jobPositionRepository;
+    private final JobStatisticsRepository jobStatisticsRepository;
     public DatabaseManager() {
         clientRepository = new ClientRepository();
         adminRepository = new AdminRepository();
         jobPositionRepository = new JobPositionRepository();
         userRepository = new UserRepository();
+        jobStatisticsRepository = new JobStatisticsRepository();
 
     } public boolean isLoginTaken(String login) {
        return userRepository.isLoginTaken(login);
+    }
+
+    public SalaryData getSalary(String uuid) {
+        return clientRepository.getSalaryDataByUuid(uuid);
     }
 
     public String authenticateUserWithHash(String login, String hashedPassword) {
@@ -122,5 +131,9 @@ public class DatabaseManager {
 
     public int getHours(String clientUuid) {
         return clientRepository.getTotalHoursByUuid(clientUuid);
+    }
+
+    public JobStatisticsRepository getJobStatisticsRepository() {
+        return jobStatisticsRepository;
     }
 }
